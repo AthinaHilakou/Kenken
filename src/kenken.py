@@ -11,7 +11,7 @@ import aima_files.csp as csp
 
 
 
-class Kenken(CSP):
+class Kenken(csp.CSP):
 
     def __init__(self, lines):
         self.size = int(lines.pop(0))
@@ -61,7 +61,7 @@ class Kenken(CSP):
         
 
 
-        CSP().__init__(self, self.variables, self.domains, self.neighbors,self.kenken_constraints)
+        csp.CSP().__init__(self, self.variables, self.domains, self.neighbors, self.kenken_constraints)
 
 
     def constraint_of_ABteam(self, A, a, B, b):

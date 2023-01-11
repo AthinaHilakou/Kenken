@@ -18,11 +18,10 @@ class Kenken(csp.CSP):
         self.variables = list()
         self.domains = dict()
         self.neighbors = dict()
-        self.clique_variables = dict() #Dictionary of clique index->variables 
-        self.cliques = dict() #A dictionary of variable->clique index, clique index is unique for each clique
-        self.clique_constraints = dict() #A dictionary of clique index -> clique constraint
-        #Constraints are of type (int, 'operand'), where int, operand denote the target result of the clique and the operand used for the 
-        # constaint accordingly 
+        self.clique_variables = dict() #Dictionary of clique index->variables, , clique index is unique for each clique
+        self.cliques = dict() #Dictionary of variable->clique index
+        self.clique_constraints = dict() #Dictionary of clique index -> clique constraint
+        #Constraints are of type (int, 'operand'), where int, operand denote the target result of the clique and the operand used 
 
 
 
@@ -85,7 +84,7 @@ class Kenken(csp.CSP):
             clique_value = max(a,b)/min(a,b)
 
         assigned_members = 2 
-        if(flag == True): #cliques may contain more than two members only if operand = + or *
+        if(flag == True): #cliques may contain more than two members only if operand is + or *
             clique_members.remove(A)
             clique_members.remove(B)
             for var in clique_members: 
@@ -147,7 +146,7 @@ class Kenken(csp.CSP):
         return res 
 
 
-
+ #TODO display function 
 
    
 # ______________________________________________________________________________

@@ -45,6 +45,7 @@ class Kenken(csp.CSP):
             for i in range(self.size):
                 if i != var[1]:
                     self.neighbors[var].append((var[0], i))
+            #TODO IF TWO VARIABLES ARE IN THE SAME CLIQUE MAKE THEM NEIGHBORS
 
         """Parse Lines"""
         for line in lines:
@@ -205,8 +206,10 @@ if __name__ == "__main__":
     print(kenken_puzzle.cliques)
     print()
     print(kenken_puzzle.domains)
-    print(len(kenken_puzzle.variables))
-
+    print()
+    print(kenken_puzzle.variables)
+    print()
+    print(kenken_puzzle.neighbors)
 
     if sys.argv[2] == "BT":
         print("Using BT algorithm to solve the puzzle")

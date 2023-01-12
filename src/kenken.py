@@ -45,6 +45,8 @@ class Kenken(csp.CSP):
             for i in range(self.size):
                 if i != var[1]:
                     self.neighbors[var].append((var[0], i))
+
+            
             #TODO IF TWO VARIABLES ARE IN THE SAME CLIQUE MAKE THEM NEIGHBORS
 
         """Parse Lines"""
@@ -143,6 +145,14 @@ class Kenken(csp.CSP):
         if A[0] == B[0] or A[1] == B[1]:
             if a == b:
                 return False
+        #TODO a, b different from neighbors 
+        """    for n in self.neighbors[A]:
+            if n in game_kenken.infer_assignment() and game_kenken.infer_assignment()[n] == a:
+                return False
+    
+        for n in self.neighbors[B]:
+            if n in game_kenken.infer_assignment() and game_kenken.infer_assignment()[n] == b:
+                return False"""
         if self.cliques[A] == self.cliques[B]:
             res = self.constraint_of_ABteam(A, a, B, b)
         else:

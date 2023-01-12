@@ -1,6 +1,6 @@
 import re
 import sys
-import aima_files.csp as csp
+import csp
 
 #sdi: 1115202000213
 
@@ -49,22 +49,26 @@ class Kenken(csp.CSP):
         """Parse Lines"""
         for line in lines:
             target, vars, operand = line.split('#')
+            operand = operand.replace('\n','')
             clique_vars = vars.split('-')
+            self.clique_variables[lines.index(line)] = list()
             for c_var in clique_vars:
-                grid_line = int(c_var)/self.size
-                grid_column = int(c_var)%self.size
+                grid_line = int(int(c_var)/self.size)
+                grid_column = int(int(c_var)%self.size)
                 self.clique_variables[lines.index(line)].append((grid_line, grid_column))
                 self.cliques[(grid_line, grid_column)] = lines.index(line) 
-            self.clique_constraint[lines.index(line)] = (target, operand)
+            self.clique_constraints[lines.index(line)] = (target, operand)
 
         
 
 
-        csp.CSP().__init__(self, self.variables, self.domains, self.neighbors, self.kenken_constraints)
+        csp.CSP.__init__(self, self.variables, self.domains, self.neighbors, self.kenken_constraints)
+
+
 
 
     def constraint_of_ABteam(self, A, a, B, b):
-        clique_members = self.clique_variables[self.cliques[A]] #Get all members of a clique
+        clique_members = self.clique_variables[self.cliques[A]].copy() #Get all members of a clique
         members_count = len(clique_members)
         clique_specifics = self.clique_constraints[self.cliques[A]] #Get target, operand tuple
         target = int(clique_specifics[0])
@@ -102,7 +106,7 @@ class Kenken(csp.CSP):
         return False 
     
     def constraint_of_Ateam(self, A , a):
-        clique_members = self.clique_variables[self.cliques[A]] #Get all members of a clique
+        clique_members = self.clique_variables[self.cliques[A]].copy() #Get all members of a clique
         members_count = len(clique_members)
         clique_specifics = self.clique_constraints[self.cliques[A]] #Get target, operand tuple
         target = int(clique_specifics[0])
@@ -146,7 +150,14 @@ class Kenken(csp.CSP):
         return res 
 
 
- #TODO display function 
+    #def display(self, assignment):
+       # for i in range(self.size):
+            #for j in range(self.size):
+               # z = int(assignment[(i, j)])
+               # print(z, end = ' ')
+            #print('\n')
+       # return
+
 
    
 # ______________________________________________________________________________
@@ -170,5 +181,54 @@ CliqueParticipants : Cells that participate in each clique
 
 Operation : Operator of each clique 
 """
+
+
+
+
+if __name__ == "__main__":
+    print(sys.argv[1])
+    """Read lines from kenken file"""
+    with open(sys.argv[1], 'r') as f:
+       lines = f.readlines()
+    
+    f.close()
+
+    kenken_puzzle = Kenken(lines)
+    #for i in range(1 ,1000):
+        #for j in range(1, 1000):
+            #if  kenken_puzzle.kenken_constraints((0,0), i, (2,2), j):
+                #print(i == 3 and j < 7)
+
+    print(kenken_puzzle.size)
+    print(kenken_puzzle.clique_constraints)
+    print(kenken_puzzle.clique_variables)
+    print(kenken_puzzle.cliques)
+    print()
+    print(kenken_puzzle.domains)
+    print(len(kenken_puzzle.variables))
+
+
+    if sys.argv[2] == "BT":
+        print("Using BT algorithm to solve the puzzle")
+        print()
+        kenken_puzzle.display(csp.backtracking_search(kenken_puzzle))   		
+    elif sys.argv[2] == "BT+MRV":
+        print("Using BT and MRV algorithms to solve the puzzle")
+        print()
+        kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv))
+    elif sys.argv[2] == "FC":
+        print("Using FC algorithm to solve the puzzle")
+        print()
+        kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, inference=csp.forward_checking))
+    elif sys.argv[2] == "FC+MRV":        
+        print("Using FC and MRV algorithms to solve the puzzle")
+        print()
+        kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv, inference=csp.forward_checking))
+    elif sys.argv[2] == "MAC":        
+        print("Using MAC algorithm to solve the puzzle")
+        print()
+        kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, inference=csp.mac))
+    else:
+	    print("Error, rerun and hope for the bset")
 
 

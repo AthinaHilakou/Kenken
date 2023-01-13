@@ -107,6 +107,8 @@ class Kenken(csp.CSP):
                 return (target > clique_value)
             elif (members_count == assigned_members):
                 return (target == clique_value)  
+            else:
+                return False 
 
         elif (operand == '-'):
             clique_value = abs(a - b) 
@@ -158,7 +160,8 @@ class Kenken(csp.CSP):
                 return (target > clique_value)
             elif (members_count == assigned_members):
                 return (target == clique_value)  
-            
+            else:
+                return False
                     
         elif (operand == '-'): #Subtraction 
             for var in clique_members: 
@@ -178,11 +181,11 @@ class Kenken(csp.CSP):
                     assigned_members += 1
                     clique_value = max(clique_value,current_assignment[var])/min(clique_value, current_assignment[var])
             if (members_count > assigned_members):  
-                return (target >= clique_value)
+                return True 
             elif (members_count == assigned_members):
                 return (target == clique_value) 
 
-        
+        return True  
 
      
     def kenken_constraints(self, A, a, B, b):
@@ -250,48 +253,57 @@ if __name__ == "__main__":
     print(sys.argv[1])
     """Read lines from kenken file"""
     with open(sys.argv[1], 'r') as f:
-       lines = f.readlines()
-    
+        lines = f.readlines()
+        
     f.close()
 
     kenken_puzzle = Kenken(lines)
-    #for i in range(1 ,1000):
-    #   for j in range(1, 1000):
-    #      if  kenken_puzzle.kenken_constraints((0,0), i, (2,2), j):
-    #            print(i == 3 and j < 7)
+    
+    
+    if (len(sys.argv) == 2):
+        print("\nDebugging mode, rerun with algorithm arg for results\n")
+         #for i in range(1 ,1000):
+        #   for j in range(1, 1000):
+        #      if  kenken_puzzle.kenken_constraints((0,0), i, (2,2), j):
+        #            print(i == 3 and j < 7)
 
-    #print(kenken_puzzle.size)
-    #print(kenken_puzzle.clique_constraints)
-    #print(kenken_puzzle.clique_variables)
-    #print(kenken_puzzle.cliques)
-    #print()
-    #print(kenken_puzzle.domains)
-    #print()
-    #print(kenken_puzzle.variables)
-    #print()
-    #print(kenken_puzzle.neighbors)
-
-    if sys.argv[2] == "BT":
-        print("Using BT algorithm to solve the puzzle")
-        print()
-        kenken_puzzle.display(csp.backtracking_search(kenken_puzzle))   		
-    elif sys.argv[2] == "BT+MRV":
-        print("Using BT and MRV algorithms to solve the puzzle")
-        print()
-        kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv))
-    elif sys.argv[2] == "FC":
-        print("Using FC algorithm to solve the puzzle")
-        print()
-        kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, inference=csp.forward_checking))
-    elif sys.argv[2] == "FC+MRV":        
-        print("Using FC and MRV algorithms to solve the puzzle")
-        print()
-        kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv, inference=csp.forward_checking))
-    elif sys.argv[2] == "MAC":        
-        print("Using MAC algorithm to solve the puzzle")
-        print()
-        kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, inference=csp.mac))
+        #print(kenken_puzzle.size)
+        #print(kenken_puzzle.clique_constraints)
+        #print(kenken_puzzle.clique_variables)
+        #print(kenken_puzzle.cliques)
+        #print()
+        #print(kenken_puzzle.domains)
+        #print()
+        #print(kenken_puzzle.variables)
+        #print()
+        #print(kenken_puzzle.neighbors)
+    
+    
     else:
-	    print("Error, rerun and hope for the bset")
+       
+       
+
+        if sys.argv[2] == "BT":
+            print("Using BT algorithm to solve the puzzle")
+            print()
+            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle))   		
+        elif sys.argv[2] == "BT+MRV":
+            print("Using BT and MRV algorithms to solve the puzzle")
+            print()
+            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv))
+        elif sys.argv[2] == "FC":
+            print("Using FC algorithm to solve the puzzle")
+            print()
+            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, inference=csp.forward_checking))
+        elif sys.argv[2] == "FC+MRV":        
+            print("Using FC and MRV algorithms to solve the puzzle")
+            print()
+            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv, inference=csp.forward_checking))
+        elif sys.argv[2] == "MAC":        
+            print("Using MAC algorithm to solve the puzzle")
+            print()
+            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, inference=csp.mac))
+        else:
+            print("Error in command line args")
 
 

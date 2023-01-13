@@ -47,7 +47,7 @@ class Kenken(csp.CSP):
                     self.neighbors[var].append((var[0], i))
 
             
-            #TODO IF TWO VARIABLES ARE IN THE SAME CLIQUE MAKE THEM NEIGHBORS
+            
 
         """Parse Lines"""
         for line in lines:
@@ -71,88 +71,134 @@ class Kenken(csp.CSP):
 
 
     def constraint_of_ABteam(self, A, a, B, b):
-        clique_members = self.clique_variables[self.cliques[A]].copy() #Get all members of a clique
+        clique_members = self.clique_variables[self.cliques[A]].copy() #Get a copy of members of A's and B's clique
         members_count = len(clique_members)
         clique_specifics = self.clique_constraints[self.cliques[A]] #Get target, operand tuple
         target = int(clique_specifics[0])
         operand = clique_specifics[1]
         current_assignment = self.infer_assignment()
         clique_value = 0 
-        flag = False  
-        if (operand == '*'):
+        assigned_members = 2 
+        
+        clique_members.remove(A) #So that we don't count them twice
+        clique_members.remove(B)
+        
+        if (operand == '='): #Equality 
+            return ((a == b) and (a == target) and (A == B))
+        
+        elif (operand == '*'): #Multiplication 
             clique_value = a * b
-            flag = True 
+            for var in clique_members: 
+                if var in current_assignment:
+                    assigned_members += 1
+                    clique_value *= current_assignment[var]
+            if (members_count > assigned_members): 
+                return (target >= clique_value) 
+            elif (members_count == assigned_members):
+                return (target == clique_value) 
+        
         elif (operand == '+'):
             clique_value = a + b
-            flag = True 
+            for var in clique_members: 
+                if var in current_assignment:
+                    assigned_members += 1
+                    clique_value += current_assignment[var]
+            if (members_count > assigned_members): 
+                return (target > clique_value)
+            elif (members_count == assigned_members):
+                return (target == clique_value)  
+
         elif (operand == '-'):
-            clique_value = abs(a - b)
+            clique_value = abs(a - b) 
+            return (clique_value == target)
+        
         elif (operand == '/'):
             clique_value = max(a,b)/min(a,b)
+            return (clique_value == target)
 
-        assigned_members = 2 
-        if(flag == True): #cliques may contain more than two members only if operand is + or *
-            clique_members.remove(A)
-            clique_members.remove(B)
-            for var in clique_members: 
-                if var in current_assignment.keys():
-                    assigned_members = assigned_members + 1
-                    if (operand == '*'):
-                        clique_value = clique_value*current_assignment[var]
-                    elif (operand == '+'):
-                        clique_value = clique_value + current_assignment[var]
         
-        if ((members_count > assigned_members) and (target > clique_value)):
-            return True
-        elif ((members_count == assigned_members) and (target == clique_value)):
-            return True  
-        return False 
+     
+    
+    
     
     def constraint_of_Ateam(self, A , a):
-        clique_members = self.clique_variables[self.cliques[A]].copy() #Get all members of a clique
+        clique_members = self.clique_variables[self.cliques[A]].copy() #Get a copy of members of A's clique
         members_count = len(clique_members)
         clique_specifics = self.clique_constraints[self.cliques[A]] #Get target, operand tuple
         target = int(clique_specifics[0])
         operand = clique_specifics[1]
-        current_assignment = self.infer_assignment()
-        clique_value = a 
-        assigned_members = 1
-        clique_members.remove(A)
-        for var in clique_members: 
-            if var in current_assignment.keys():
-                assigned_members = assigned_members + 1
-                if (operand == '*'):
-                    clique_value = clique_value*current_assignment[var]
-                elif (operand == '+'):
-                    clique_value = clique_value + current_assignment[var]
-                elif (operand == '-'):
+        current_assignment = self.infer_assignment() # Variables currently assigned 
+        clique_value = a   # Initialize clique's value = A's value 
+        assigned_members = 1 #Clique's members currently assigned a value (that we know of)
+        
+        
+        
+        clique_members.remove(A) # So that we don't count it twice 
+        
+        if (operand == '='): #Equality 
+            return (a == target)  
+        
+        elif (operand == '*'): #Multiplication
+            for var in clique_members:
+                if var in current_assignment:
+                    assigned_members += 1
+                    clique_value *= current_assignment[var]
+            if (members_count > assigned_members): 
+                return (target >= clique_value) 
+            elif (members_count == assigned_members):
+                return (target == clique_value) 
+
+
+        elif (operand == '+'): #Addition
+            for var in clique_members:
+                if var in current_assignment:
+                    assigned_members += 1
+                    clique_value += current_assignment[var]
+            if (members_count > assigned_members): 
+                return (target > clique_value)
+            elif (members_count == assigned_members):
+                return (target == clique_value)  
+            
+                    
+        elif (operand == '-'): #Subtraction 
+            for var in clique_members: 
+                if var in current_assignment:
+                    assigned_members += 1
                     clique_value = abs(clique_value - current_assignment[var])
-                elif (operand == '/'):
+            if (members_count > assigned_members):  
+                return (target != clique_value)
+            elif (members_count == assigned_members):
+                return (target == clique_value)   
+
+        
+        
+        elif (operand == '/'): #Division 
+            for var in clique_members: 
+                if var in current_assignment:
+                    assigned_members += 1
                     clique_value = max(clique_value,current_assignment[var])/min(clique_value, current_assignment[var])
-        if len(clique_members) == 0: #Clique consists of one member only, operand is = 
-            return (a == target)
-          
-        if ((members_count > assigned_members) and (target > clique_value)):
-            return True
-        elif ((members_count == assigned_members) and (target == clique_value)):
-            return True  
-        return False 
+            if (members_count > assigned_members):  
+                return (target >= clique_value)
+            elif (members_count == assigned_members):
+                return (target == clique_value) 
 
-
+        
 
      
     def kenken_constraints(self, A, a, B, b):
-        if A[0] == B[0] or A[1] == B[1]:
+        if A[0] == B[0] or A[1] == B[1]: # A != B 
             if a == b:
                 return False
-        #TODO a, b different from neighbors 
-        """    for n in self.neighbors[A]:
-            if n in game_kenken.infer_assignment() and game_kenken.infer_assignment()[n] == a:
+        
+        for n in self.neighbors[A]: # A must have different value from all neighboring variables
+            if n in self.infer_assignment() and self.infer_assignment()[n] == a:
                 return False
     
-        for n in self.neighbors[B]:
-            if n in game_kenken.infer_assignment() and game_kenken.infer_assignment()[n] == b:
-                return False"""
+        for n in self.neighbors[B]: # B must have different value from all neighboring variables
+            if n in self.infer_assignment() and self.infer_assignment()[n] == b:
+                return False
+        
+        
         if self.cliques[A] == self.cliques[B]:
             res = self.constraint_of_ABteam(A, a, B, b)
         else:
@@ -161,13 +207,17 @@ class Kenken(csp.CSP):
         return res 
 
 
-    #def display(self, assignment):
-       # for i in range(self.size):
-            #for j in range(self.size):
-               # z = int(assignment[(i, j)])
-               # print(z, end = ' ')
-            #print('\n')
-       # return
+    def display(self, assignment):
+        if (assignment == None):
+            print("No solution was found")
+        
+        else:
+            for i in range(self.size):
+                for j in range(self.size):
+                    z = int(assignment[(i, j)])
+                    print(z, end = ' ')
+                print('\n')
+        return
 
 
    
@@ -206,20 +256,20 @@ if __name__ == "__main__":
 
     kenken_puzzle = Kenken(lines)
     #for i in range(1 ,1000):
-        #for j in range(1, 1000):
-            #if  kenken_puzzle.kenken_constraints((0,0), i, (2,2), j):
-                #print(i == 3 and j < 7)
+    #   for j in range(1, 1000):
+    #      if  kenken_puzzle.kenken_constraints((0,0), i, (2,2), j):
+    #            print(i == 3 and j < 7)
 
-    print(kenken_puzzle.size)
-    print(kenken_puzzle.clique_constraints)
-    print(kenken_puzzle.clique_variables)
-    print(kenken_puzzle.cliques)
-    print()
-    print(kenken_puzzle.domains)
-    print()
-    print(kenken_puzzle.variables)
-    print()
-    print(kenken_puzzle.neighbors)
+    #print(kenken_puzzle.size)
+    #print(kenken_puzzle.clique_constraints)
+    #print(kenken_puzzle.clique_variables)
+    #print(kenken_puzzle.cliques)
+    #print()
+    #print(kenken_puzzle.domains)
+    #print()
+    #print(kenken_puzzle.variables)
+    #print()
+    #print(kenken_puzzle.neighbors)
 
     if sys.argv[2] == "BT":
         print("Using BT algorithm to solve the puzzle")

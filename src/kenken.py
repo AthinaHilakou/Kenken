@@ -226,26 +226,7 @@ class Kenken(csp.CSP):
 
    
 # ______________________________________________________________________________
-#Inputs 
-"""
-Kenken Board Size
-
-Target#CliqueParticipants#Operation
-
-Target#CliqueParticipants#Operation
-
-Target#CliqueParticipants#Operation
-
-...
-
-Target#CliqueParticipants#Operation
-
-Target : Target number of each clique 
-
-CliqueParticipants : Cells that participate in each clique 
-
-Operation : Operator of each clique 
-"""
+#Main
 
 
 
@@ -263,7 +244,7 @@ if __name__ == "__main__":
     
     if (len(sys.argv) == 2):
         print("\nDebugging mode, rerun with algorithm arg for results\n")
-         #for i in range(1 ,1000):
+         #for i in range(1 ,1000): #for Kenken Hard 4
         #   for j in range(1, 1000):
         #      if  kenken_puzzle.kenken_constraints((0,0), i, (2,2), j):
         #            print(i == 3 and j < 7)

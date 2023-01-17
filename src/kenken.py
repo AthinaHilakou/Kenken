@@ -1,6 +1,7 @@
 import re
 import sys
 import csp
+import time 
 
 #sdi: 1115202000213
 
@@ -286,23 +287,84 @@ if __name__ == "__main__":
         if sys.argv[2] == "BT":
             print("Using BT algorithm to solve the puzzle")
             print()
-            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle))   		
+            begin = time.time()
+            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle))
+            end = time.time()	
+            print("Total time is: " + str(end - begin))
+            print("Total assignments are: " + str(kenken_puzzle.nassigns))
         elif sys.argv[2] == "BT+MRV":
             print("Using BT and MRV algorithms to solve the puzzle")
             print()
+            begin = time.time()
             kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv))
+            end = time.time()	
+            print("Total time is: " + str(end - begin))
+            print("Total assignments are: " + str(kenken_puzzle.nassigns))
+        elif sys.argv[2] == "BT+MRV+LCV":
+            print("Using BT and MRV and LCV algorithms to solve the puzzle")
+            print()
+            begin = time.time()
+            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle,select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv))
+            end = time.time()	
+            print("Total time is: " + str(end - begin))
+            print("Total assignments are: " + str(kenken_puzzle.nassigns))
         elif sys.argv[2] == "FC":
             print("Using FC algorithm to solve the puzzle")
             print()
+            begin = time.time()
             kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, inference=csp.forward_checking))
+            end = time.time()	
+            print("Total time is: " + str(end - begin))
+            print("Total assignments are: " + str(kenken_puzzle.nassigns))
         elif sys.argv[2] == "FC+MRV":        
             print("Using FC and MRV algorithms to solve the puzzle")
             print()
+            begin = time.time()
             kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv, inference=csp.forward_checking))
+            end = time.time()	
+            print("Total time is: " + str(end - begin))
+            print("Total assignments are: " + str(kenken_puzzle.nassigns))
+        elif sys.argv[2] == "FC+MRV+LCV":        
+            print("Using FC and MRV and LCV algorithms to solve the puzzle")
+            print()
+            begin = time.time()
+            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv, order_domain_values=csp.lcv, inference=csp.forward_checking))
+            end = time.time()	
+            print("Total time is: " + str(end - begin))
+            print("Total assignments are: " + str(kenken_puzzle.nassigns))
         elif sys.argv[2] == "MAC":        
             print("Using MAC algorithm to solve the puzzle")
             print()
+            begin = time.time()
             kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, inference=csp.mac))
+            end = time.time()	
+            print("Total time is: " + str(end - begin))
+            print("Total assignments are: " + str(kenken_puzzle.nassigns))
+        elif sys.argv[2] == "MAC+MRV":        
+            print("Using MAC and MRV algorithm to solve the puzzle")
+            print()
+            begin = time.time()
+            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv, inference=csp.mac))
+            end = time.time()	
+            print("Total time is: " + str(end - begin))
+            print("Total assignments are: " + str(kenken_puzzle.nassigns))
+        elif sys.argv[2] == "MAC+MRV+LCV":        
+            print("Using MAC and MRV and LCV algorithm to solve the puzzle")
+            print()
+            begin = time.time()
+            kenken_puzzle.display(csp.backtracking_search(kenken_puzzle, select_unassigned_variable=csp.mrv, order_domain_values= csp.lcv, inference=csp.mac))
+            end = time.time()	
+            print("Total time is: " + str(end - begin))
+            print("Total assignments are: " + str(kenken_puzzle.nassigns))
+        elif sys.argv[2] == "MIN_CONFLICTS":        
+            print("Using min conflicts algorithm to solve the puzzle")
+            print()
+            begin = time.time()
+            kenken_puzzle.display(csp.min_conflicts(kenken_puzzle, 100))
+            end = time.time()	
+            print("Total time is: " + str(end - begin))
+            print("Total assignments are: " + str(kenken_puzzle.nassigns))
+        
         else:
             print("Error in command line args")
 
